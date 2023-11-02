@@ -58,7 +58,7 @@ class Board():
         if piece.color != self.toPlay:
             return False
 
-        if piece.validate(destinationPiece, row, column):
+        if piece.validate(destinationPiece, row, column, self):
             self.board[column + 7 + ((7 - row) * 8)] = piece
             self.board[ord(origin[0]) - 65 + (8 - int(origin[1])) * 8] = None
 
@@ -68,3 +68,15 @@ class Board():
             self.toPlay = 'black' if self.toPlay == 'white' else 'white'
             return True
         return False
+
+    def clearPath(self, column, destinationColumn, row, destinationRow):
+        print(column, destinationColumn, row, destinationRow)
+        if column == destinationColumn:
+            for i in range(row, destinationRow - 1):
+                if self.board[(i * 8 + (column - 1))] is not None:
+                    return False
+        if row == destinationRow:
+            for i in range(column - 1, destinationColumn - 1):
+                if self.board[(row - 1) * 8 + i] is not None:
+                    return False
+        return True

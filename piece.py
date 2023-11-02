@@ -13,7 +13,7 @@ class Pawn(Piece):
     def toString(self):
         return '♟' if self.color == 'black' else '♙'
 
-    def validate(self, destination, row, column):
+    def validate(self, destination, row, column, board):
         direction = - 1 if self.color == 'black' else 1
 
         if destination is None:
@@ -40,8 +40,14 @@ class Rook(Piece):
     def toString(self):
         return '♜' if self.color == 'black' else '♖'
 
-    def validate(self, destination):
-        return
+    def validate(self, destination, row, column, board):
+        if destination is not None:
+            if self.color == destination.color:
+                return False
+        if self.column == column or self.row == row:
+            print('chamou o clear path')
+            return board.clearPath(self.column, column, self.row, row)
+        return False
 
 
 class Bishop(Piece):
@@ -51,7 +57,7 @@ class Bishop(Piece):
     def toString(self):
         return '♝' if self.color == 'black' else '♗'
 
-    def validate(self, destination):
+    def validate(self, destination, row, column, board):
         return
 
 
@@ -62,7 +68,7 @@ class Knight(Piece):
     def toString(self):
         return '♞' if self.color == 'black' else '♘'
 
-    def validate(self, destination):
+    def validate(self, destination, row, column, board):
         return
 
 
@@ -73,7 +79,7 @@ class Queen(Piece):
     def toString(self):
         return '♛' if self.color == 'black' else '♕'
 
-    def validate(self, destination):
+    def validate(self, destination, row, column, board):
         return
 
 
@@ -84,5 +90,6 @@ class King(Piece):
     def toString(self):
         return '♚' if self.color == 'black' else '***REMOVED***'
 
-    def validate(self, destination):
+    def validate(self, destination, row, column, board):
         return
+
