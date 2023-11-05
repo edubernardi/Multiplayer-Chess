@@ -45,8 +45,7 @@ class Rook(Piece):
             if self.color == destination.color:
                 return False
         if self.column == column or self.row == row:
-            print('chamou o clear path')
-            return board.clearPath(self.column, column, self.row, row)
+            return board.clearPathLine(self.column, column, self.row, row)
         return False
 
 
@@ -58,7 +57,12 @@ class Bishop(Piece):
         return '♝' if self.color == 'black' else '♗'
 
     def validate(self, destination, row, column, board):
-        return
+        if destination is not None:
+            if self.color == destination.color:
+                return False
+        if abs(column - self.column) == abs(row - self.row):
+            return board.clearPathDiagonal(self.column, column, self.row, row)
+        return False
 
 
 class Knight(Piece):
@@ -69,7 +73,11 @@ class Knight(Piece):
         return '♞' if self.color == 'black' else '♘'
 
     def validate(self, destination, row, column, board):
-        return
+        if destination is not None:
+            if self.color == destination.color:
+                return False
+        return abs(self.row - row) == 1 and abs(self.column - column) == 2 or\
+               abs(self.row - row) == 2 and abs(self.column - column) == 1
 
 
 class Queen(Piece):
@@ -80,7 +88,15 @@ class Queen(Piece):
         return '♛' if self.color == 'black' else '♕'
 
     def validate(self, destination, row, column, board):
-        return
+        if destination is not None:
+            if self.color == destination.color:
+                return False
+        if abs(column - self.column) == abs(row - self.row):
+            return board.clearPathDiagonal(self.column, column, self.row, row)
+        if self.column == column or self.row == row:
+            return board.clearPathLine(self.column, column, self.row, row)
+        return False
+
 
 
 class King(Piece):
@@ -91,5 +107,10 @@ class King(Piece):
         return '♚' if self.color == 'black' else '***REMOVED***'
 
     def validate(self, destination, row, column, board):
-        return
+        if destination is not None:
+            if self.color == destination.color:
+                return False
+        return abs(self.row - row) == 1 and abs(self.column - column) == 0 or\
+               abs(self.row - row) == 0 and abs(self.column - column) == 1 or\
+               abs(self.row - row) == 1 and abs(self.column - column) == 1
 
