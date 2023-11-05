@@ -69,14 +69,25 @@ class Board():
             return True
         return False
 
-    def clearPath(self, column, destinationColumn, row, destinationRow):
-        print(column, destinationColumn, row, destinationRow)
+    def clearPathLine(self, column, destinationColumn, row, destinationRow):
         if column == destinationColumn:
-            for i in range(row, destinationRow - 1):
-                if self.board[(i * 8 + (column - 1))] is not None:
+            step = 1 if row < destinationRow else - 1
+            for i in range(row + step, destinationRow, step):
+                if self.board[column + 7 + ((7 - i) * 8)] is not None:
                     return False
         if row == destinationRow:
-            for i in range(column - 1, destinationColumn - 1):
-                if self.board[(row - 1) * 8 + i] is not None:
+            step = 1 if row < destinationRow else - 1
+            for i in range(column + step, destinationColumn, step):
+                if self.board[i + 7 + ((7 - row) * 8)] is not None:
                     return False
+        return True
+
+    def clearPathDiagonal(self, column, destinationColumn, row, destinationRow):
+        verticalStep = 1 if row < destinationRow else - 1
+        horizontalStep = 1 if column < destinationColumn else - 1
+        for i in range(1, abs(row - destinationRow)):
+            column += horizontalStep
+            row += verticalStep
+            if self.board[column + 7 + ((7 - row) * 8)] is not None:
+                return False
         return True
