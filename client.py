@@ -8,6 +8,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     data = s.recv(1024)
     while data is not None:
         print(data.decode())
+        if 'Game over' in data.decode():
+            s.close()
+            break
         if 'Your move' in data.decode():
             play = input("Jogada: ")
             s.sendall(play.encode())
