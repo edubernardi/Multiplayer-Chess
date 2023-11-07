@@ -20,5 +20,5 @@ class Player():
         self.address = address
 
     def getTime(self):
-        return "\n" + str(time.strftime('%M:%S', time.gmtime(self.time))) + "\n"
+        return str(time.strftime('%M:%S', time.gmtime(self.time))) + "\n"
 
