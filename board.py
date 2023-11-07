@@ -91,3 +91,11 @@ class Board():
             if self.board[column + 7 + ((7 - row) * 8)] is not None:
                 return False
         return True
+
+    def kingCaptured(self, color):
+        king = None
+        for piece in self.board:
+            if isinstance(piece, King):
+                if piece.color == color:
+                    king = piece
+        return True if king is None else False

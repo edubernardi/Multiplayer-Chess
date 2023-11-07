@@ -1,5 +1,6 @@
 from board import Board
-
+from player import Player
+import time
 import socket
 
 HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
@@ -9,10 +10,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))
     s.listen()
     board = Board()
-    player1, addr = s.accept()
-    print(f"Player 1 Connected by {addr}")
-    player2, addr2 = s.accept()
-    print(f"Player 2 Connected by {addr2}")
+    connection = s.accept()
+    player1 = Player(connection[0], connection[1], 'white')
+    print(f"Player 1 Connected by {player1.address}")
+    connection = s.accept()
+    player2 = Player(connection[0], connection[1], 'black')
+    print(f"Player 2 Connected by {player1.address}")
 
     while True:
         if board.toPlay == 'white':
@@ -23,24 +26,53 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             waiting = player1
         print(board.toPlay + " to play")
 
-        try:
-            waiting.sendall((board.unicodeBoard() + "\n Waiting for opponent - " + board.toPlay + " to play").encode())
-        except WindowsError:
-            if board.toPlay == 'white':
-                player2, addr = s.accept()
-            else:
-                player1, addr = s.accept()
 
         try:
-            playing.sendall((board.unicodeBoard() + "\n Your move - " + board.toPlay + " to play").encode())
-            data = playing.recv(1024)
+            if playing.timeout():
+                waiting.socket.sendall(
+                    (player2.getTime() + board.unicodeBoard() + player1.getTime() +
+                     board.toPlay + "'s time ran out, you win! Game over").encode())
+            elif board.kingCaptured(playing.color):
+                waiting.socket.sendall(
+                    (player2.getTime() + board.unicodeBoard() + player1.getTime() +
+                     board.toPlay + "'s king got captured, you win! Game over").encode())
+            else:
+                waiting.socket.sendall(
+                    (player2.getTime() + board.unicodeBoard() + player1.getTime() +
+                     "Waiting for opponent - " + board.toPlay + " to play").encode())
+        except WindowsError:
+            connection = s.accept()
+            if board.toPlay == 'white':
+                player2.updateConnection(connection[0], connection[1])
+            else:
+                player1.updateConnection(connection[0], connection[1])
+
+        try:
+            if playing.timeout():
+                playing.socket.sendall(
+                    (player2.getTime() + board.unicodeBoard() + player1.getTime() +
+                     board.toPlay + "'s time ran out, you lose! Game over").encode())
+                s.close()
+                break
+            elif board.kingCaptured(playing.color):
+                playing.socket.sendall(
+                    (player2.getTime() + board.unicodeBoard() + player1.getTime() +
+                     board.toPlay + "'s king got captured, you win! Game over").encode())
+            else:
+                playing.socket.sendall(
+                    (player2.getTime() + board.unicodeBoard() + player1.getTime() +
+                     "Your move - " + board.toPlay + " to play").encode())
+            start = time.perf_counter()
+            data = playing.socket.recv(1024)
             data = data.decode().split(' ')
             print(data)
             if len(data) == 2:
                 print('Jogada OK')
                 print('Jogada: ', board.play(data[0], data[1]))
+            playing.incrementTime(time.perf_counter() - start)
         except WindowsError:
+            connection = s.accept()
             if board.toPlay == 'white':
-                player1, addr = s.accept()
+                player1.updateConnection(connection[0], connection[1])
             else:
-                player2, addr = s.accept()
+                player2.updateConnection(connection[0], connection[1])
