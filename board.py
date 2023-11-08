@@ -28,7 +28,7 @@ class Board():
         for i in range(0, 8):
             for j in range(0, 8):
                 if self.board[i * 8 + j] is None:
-                    unicodeBoard += "--   "
+                    unicodeBoard += "_   "
                 else:
                     unicodeBoard += self.board[i * 8 + j].toString() + "   "
             unicodeBoard += "\n"
@@ -36,7 +36,7 @@ class Board():
                 unicodeBoard += str(7 - i) + "  "
                 i -= 1
             else:
-                unicodeBoard += "   A    B    C   D    E    F   G    H\n"
+                unicodeBoard += "   A   B   C   D   E   F   G   H\n"
         return unicodeBoard
 
     def play(self, origin, destination):

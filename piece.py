@@ -104,7 +104,7 @@ class King(Piece):
         Piece.__init__(self, color, row, column)
 
     def toString(self):
-        return '♚' if self.color == 'black' else '***REMOVED***'
+        return '♚' if self.color == 'black' else '♔'
 
     def validate(self, destination, row, column, board):
         if destination is not None:
