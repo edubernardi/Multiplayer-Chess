@@ -57,7 +57,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             elif board.kingCaptured(playing.color):
                 playing.socket.sendall(
                     (player2.getTime() + board.unicodeBoard() + player1.getTime() +
-                     board.toPlay + "'s king got captured, you win! Game over").encode())
+                     board.toPlay + "'s king got captured, you lose! Game over").encode())
             else:
                 playing.socket.sendall(
                     (player2.getTime() + board.unicodeBoard() + player1.getTime() +
