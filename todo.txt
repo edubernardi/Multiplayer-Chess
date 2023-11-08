@@ -1,3 +1,1 @@
-- Protocolo, talvez usar notação de Xadrez
-- Tempo (15 minutos pra cada jogador)
 - Validar Check e CheckMate (Pode ser só o básico)
